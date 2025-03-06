@@ -49,7 +49,8 @@ local uiData = ac.connect{
     maxSelfSteerAngle        = ac.StructItem.double(),
     countersteerResponse     = ac.StructItem.double(),
     maxDynamicLimitReduction = ac.StructItem.double(), -- Stores 10x the value for legacy reasons
-    photoMode                = ac.StructItem.boolean()
+    photoMode                = ac.StructItem.boolean(),
+    triggerGammaL            = ac.StructItem.double(),
 }
 
 local firstInstall = false -- Set to true on the very first boot after installing the assist
@@ -81,7 +82,8 @@ local savedCfg = ac.storage({
     maxSelfSteerAngle        = 90.0,
     countersteerResponse     = 0.2,
     maxDynamicLimitReduction = 5.0,
-    photoMode                = false
+    photoMode                = false,
+    triggerGammaL            = 1.0,
 }, "AGA_")
 
 -- controls.ini stuff
@@ -156,6 +158,7 @@ ac.onSharedEvent("AGA_factoryReset", function()
     uiData.countersteerResponse     = 0.2
     uiData.maxDynamicLimitReduction = 5.0
     uiData.photoMode                = false
+    uiData.triggerGammaL            = 1.0
 
     onFirstInstall()
     ac.broadcastSharedEvent("AGA_reloadControlSettings")
@@ -201,6 +204,7 @@ uiData.maxSelfSteerAngle        = savedCfg.maxSelfSteerAngle
 uiData.countersteerResponse     = savedCfg.countersteerResponse
 uiData.maxDynamicLimitReduction = savedCfg.maxDynamicLimitReduction
 uiData.photoMode                = savedCfg.photoMode
+uiData.triggerGammaL            = savedCfg.triggerGammaL
 
 -- MAIN LOGIC =================================================================================
 
@@ -274,6 +278,7 @@ local function updateConfig()
     savedCfg.countersteerResponse     = uiData.countersteerResponse
     savedCfg.maxDynamicLimitReduction = uiData.maxDynamicLimitReduction
     savedCfg.photoMode                = uiData.photoMode
+    savedCfg.triggerGammaL            = uiData.triggerGammaL
 
     if math.abs(lastGameGamma - uiData._gameGamma) > 1e-6 then
         if setGameCfgValue("X360", "STEER_GAMMA", uiData._gameGamma) then
@@ -785,6 +790,8 @@ local function processInitialInput(vData, kbMode, steeringRateMult, extrasObj, d
 
         vData.inputData.brake = sanitize01Input(vData.inputData.brake + kbBrake * finalBrakeTarget)
         vData.inputData.gas   = sanitize01Input(vData.inputData.gas + kbThrottle * finalThrottleTarget)
+    else
+        vData.inputData.brake = vData.inputData.brake ^ uiData.triggerGammaL
     end
 
     return initialSteering, absInitialSteering

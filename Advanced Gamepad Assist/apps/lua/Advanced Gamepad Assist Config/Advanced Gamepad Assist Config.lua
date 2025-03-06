@@ -37,7 +37,8 @@ local uiData = ac.connect{
     maxSelfSteerAngle        = ac.StructItem.double(),
     countersteerResponse     = ac.StructItem.double(),
     maxDynamicLimitReduction = ac.StructItem.double(), -- Stores 10x the value for legacy reasons
-    photoMode                = ac.StructItem.boolean()
+    photoMode                = ac.StructItem.boolean(),
+    triggerGammaL            = ac.StructItem.double(),
 }
 
 -- Keys that are stored in a preset
@@ -96,6 +97,7 @@ local tooltips = {
     maxDynamicLimitReduction = "How much should inward steering be restricted when the car oversteers, in order to maintain front grip.\n\nLow = being able to steer inward more when the car oversteers, meaning the front tires will scrub more if you steer into a slide.\n\nHigh = the steering backing off more when the car steps out.",
     builtInSettings          = "These directly adjust AC's own settings (just like the Controller Tweaks app), they are just here for convenience.",
     photoMode                = "Allows you to leave the wheels turned when the car is parked by disabling re-centering.\nUseful for taking screenshots for example.",
+    triggerGammaL            = "Higher gamma will make your left trigger less sensitive near the center.\n\nUseful to match braking muscle memory from other games.",
     _gameGamma               = "Controls AC's own 'Steering gamma' setting.\n\nHigher gamma will make your analog stick less sensitive near the center.\n\nI would recommend around 120-160% depending on preference.",
     _gameDeadzone            = "Controls AC's own 'Steering deadzone' setting.\n\nDeadzone is used to avoid unintended inputs caused by stick-drift.\n\nShould be as low as you can go without causing unintended inputs when not touching the analog stick.",
     _gameRumble              = "Controls AC's own 'Rumble effects' setting."
@@ -743,6 +745,10 @@ function script.windowSettings(dt)
     showConfigSlider("triggerFeedbackL", "Left trigger feedback", "%.f%%", 0.0, 100.0, 100.0, false, 200.0, 0)
     showConfigSlider("triggerFeedbackR", "Right trigger feedback", "%.f%%", 0.0, 100.0, 100.0, false, 200.0, 0)
     showCheckbox("triggerFeedbackAlwaysOn", "Trigger feedback with ABS/TCS", false, false, 0)
+
+    showDummyLine(0.25)
+
+    showConfigSlider("triggerGammaL", "Left trigger gamma", "%.f%%", 100.0, 200.0, 100.0, false, 200.0, 0)
 
     showDummyLine(0.25)
 
