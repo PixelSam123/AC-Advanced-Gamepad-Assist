@@ -51,6 +51,7 @@ local uiData = ac.connect{
     maxDynamicLimitReduction = ac.StructItem.double(), -- Stores 10x the value for legacy reasons
     photoMode                = ac.StructItem.boolean(),
     triggerGammaL            = ac.StructItem.double(),
+    triggerGammaR            = ac.StructItem.double(),
 }
 
 local firstInstall = false -- Set to true on the very first boot after installing the assist
@@ -84,6 +85,7 @@ local savedCfg = ac.storage({
     maxDynamicLimitReduction = 5.0,
     photoMode                = false,
     triggerGammaL            = 1.0,
+    triggerGammaR            = 1.0,
 }, "AGA_")
 
 -- controls.ini stuff
@@ -159,6 +161,7 @@ ac.onSharedEvent("AGA_factoryReset", function()
     uiData.maxDynamicLimitReduction = 5.0
     uiData.photoMode                = false
     uiData.triggerGammaL            = 1.0
+    uiData.triggerGammaR            = 1.0
 
     onFirstInstall()
     ac.broadcastSharedEvent("AGA_reloadControlSettings")
@@ -205,6 +208,7 @@ uiData.countersteerResponse     = savedCfg.countersteerResponse
 uiData.maxDynamicLimitReduction = savedCfg.maxDynamicLimitReduction
 uiData.photoMode                = savedCfg.photoMode
 uiData.triggerGammaL            = savedCfg.triggerGammaL
+uiData.triggerGammaR            = savedCfg.triggerGammaR
 
 -- MAIN LOGIC =================================================================================
 
@@ -279,6 +283,7 @@ local function updateConfig()
     savedCfg.maxDynamicLimitReduction = uiData.maxDynamicLimitReduction
     savedCfg.photoMode                = uiData.photoMode
     savedCfg.triggerGammaL            = uiData.triggerGammaL
+    savedCfg.triggerGammaR            = uiData.triggerGammaR
 
     if math.abs(lastGameGamma - uiData._gameGamma) > 1e-6 then
         if setGameCfgValue("X360", "STEER_GAMMA", uiData._gameGamma) then
@@ -792,6 +797,7 @@ local function processInitialInput(vData, kbMode, steeringRateMult, extrasObj, d
         vData.inputData.gas   = sanitize01Input(vData.inputData.gas + kbThrottle * finalThrottleTarget)
     else
         vData.inputData.brake = vData.inputData.brake ^ uiData.triggerGammaL
+        vData.inputData.gas   = vData.inputData.gas ^ uiData.triggerGammaR
     end
 
     return initialSteering, absInitialSteering
