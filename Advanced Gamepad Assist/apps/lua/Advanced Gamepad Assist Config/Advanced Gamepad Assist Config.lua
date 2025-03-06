@@ -748,7 +748,7 @@ function script.windowSettings(dt)
 
     showDummyLine(0.25)
 
-    showConfigSlider("triggerGammaL", "Left trigger gamma", "%.f%%", 100.0, 200.0, 100.0, false, 200.0, 0)
+    showConfigSlider("triggerGammaL", "Left trigger gamma", "%.f%%", 100.0, 250.0, 100.0, false, 200.0, 0)
 
     showDummyLine(0.25)
 
