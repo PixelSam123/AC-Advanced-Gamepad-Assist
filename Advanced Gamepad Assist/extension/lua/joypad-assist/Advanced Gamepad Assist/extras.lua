@@ -270,11 +270,11 @@ M.update = function(vData, uiData, absInitialSteering, dt)
             local lVibration = 0.0
             local rVibration = 0.0
 
-            if actualBrakeNd > 0.5 and M.controllerBrake > 0.2 and (vData.vehicle.absMode < 1 or uiData.triggerFeedbackAlwaysOn) then
+            if actualBrakeNd > 0.5 and M.controllerBrake > 0.02 and (vData.vehicle.absMode < 1 or uiData.triggerFeedbackAlwaysOn) then
                 lVibration = ((math.lerpInvSat(actualBrakeNd, 0.5, 1.0) ^ 4.0) * 0.95 + 0.05) * uiData.triggerFeedbackL
             end
 
-            if actualThrottleNd > 0.5 and M.controllerThrottle > 0.2 and (vData.vehicle.tractionControlMode < 1 or uiData.triggerFeedbackAlwaysOn) then
+            if actualThrottleNd > 0.5 and M.controllerThrottle > 0.02 and (vData.vehicle.tractionControlMode < 1 or uiData.triggerFeedbackAlwaysOn) then
                 rVibration = ((math.lerpInvSat(actualThrottleNd, 0.5, 1.0) ^ 4.0) * 0.95 + 0.05) * uiData.triggerFeedbackR
             end
 
