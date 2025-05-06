@@ -635,7 +635,7 @@ local function calcCorrectedSteering(vData, targetFrontSlipDeg, initialSteering,
 
     local finalTargetSlip      = targetFrontSlipDeg * uiData.targetSlip
     -- finalTargetSlip            = finalTargetSlip * math.lerp(1.0, 0.5, math.lerpInvSat(inputSign * fAxleHVelAngle, -finalTargetSlip * 0.1, finalTargetSlip * 0.5))
-    uiData._maxLimitReduction  = math.lerp(finalTargetSlip * 0, finalTargetSlip * 1.0, lib.clamp01(uiData.maxDynamicLimitReduction / 10.0)) -- math.lerp(0.8, 1.2, lib.clamp01(vData.localHVelLen / getTopSpeedEstimate(vData)))
+    uiData._maxLimitReduction  = math.lerp(finalTargetSlip * 0.4, finalTargetSlip * 0.75, lib.clamp01(uiData.maxDynamicLimitReduction / 10.0)) -- math.lerp(0.8, 1.2, lib.clamp01(vData.localHVelLen / getTopSpeedEstimate(vData)))
     local angleSubLimit        = math.lerp(uiData._maxLimitReduction, uiData._maxLimitReduction * 0.9, vData.inputData.brake) -- How many degrees the steering limit is allowed to reduce when the car oversteers, in the process of trying to maintain the desired front slip angle -- + math.max(0.0, -inputSign * selfSteerForce * vData.steeringLockDeg)
     local clampedFAxleVelAngle = lib.clampEased(inputSign * fAxleHVelAngle, -vData.steeringLockDeg - 15.0, angleSubLimit, (angleSubLimit * 0.4) / (vData.steeringLockDeg + 15.0 + angleSubLimit)) -- Limiting how much the front velocity angle can affect the steering limit
     if vData.localHVelLen > 1e-15 then
