@@ -729,12 +729,7 @@ local function processInitialInput(vData, kbMode, steeringRateMult, extrasObj, d
     -- end
 
     local rawSteer           = sanitizeSteeringInput(vData.inputData.steerStickX + kbSteer) --  + mouseSteer
-    local centeringRate      = 1.0 -- Faster centering rate when the steering rate is under 50%
-    if steeringRateMult > 0.0 and steeringRateMult < 0.5 then
-        if (math.abs(rawSteer) < math.abs(steeringSmoother.state) and math.sign(rawSteer) == math.sign(steeringSmoother.state)) or (math.sign(rawSteer) ~= math.sign(steeringSmoother.state)) then
-            centeringRate = (steeringRateMult * 0.5 + 0.25) / steeringRateMult
-        end
-    end
+    local centeringRate      = 1.0
 
     if vData.localHVelLen < 0.5 and uiData.photoMode then
         rawSteer = (math.abs(rawSteer) > math.abs(steeringSmoother.state) or math.sign(rawSteer) ~= math.sign(steeringSmoother.state)) and sanitizeSteeringInput(steeringSmoother.state + rawSteer * dt * 100.0) or steeringSmoother.state
