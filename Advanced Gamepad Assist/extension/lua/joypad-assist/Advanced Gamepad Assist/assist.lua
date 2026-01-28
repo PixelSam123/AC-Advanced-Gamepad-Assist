@@ -218,7 +218,6 @@ local kbThrottleSmoother       = lib.SmoothTowards:new(12.0,  1.0,   0.0,  1.0, 
 local kbBrakeSmoother          = lib.SmoothTowards:new(12.0,  1.0,   0.0,  1.0,  0.0)
 local kbSteerSmoother          = lib.SmoothTowards:new( 7.0,  1.0,  -1.0,  1.0,  0.0)
 local selfSteerSmoother        = lib.SmoothTowards:new( 7.0,  0.13, -1.0,  1.0,  0.0) -- Smooths out the self-steer force
-local limitSmoother            = lib.SmoothTowards:new(11.0,  0.01,  0.0, 32.0, 32.0) -- Smooths out changes in the steering limit -- tricky to get the rate right, too slow and it causes oscillations on turn-in, too fast and it lets noise through into the steering
 local groundedSmoother         = lib.SmoothTowards:new( 4.0,  1.0,   0.0,  1.0,  1.0) -- Smooths the value that indicates if any of the front wheels are grounded
 local frontSlipDisplaySmoother = lib.SmoothTowards:new(10.0,  0.05,  0.0,  1.0,  0.0) -- Smooths the relative front slip value sent to the UI app for visualization
 local rearSlipDisplaySmoother  = lib.SmoothTowards:new(10.0,  0.05,  0.0,  1.0,  0.0) -- Smooths the relative rear slip value sent to the UI app for visualization
@@ -655,8 +654,7 @@ local function calcCorrectedSteering(vData, targetFrontSlipDeg, initialSteering,
 
     local targetSteeringAngle = math.lerp(math.clamp(targetInward, 0, vData.steeringLockDeg), math.clamp(targetCounter, 0, vData.steeringLockDeg), counterIndicator) -- The steering angle that would result in the targeted slip angle
     local notForward          = math.sin(math.clamp(math.rad(vData.travelDirection * 2.0 / 3.0), -math.pi * 0.5, math.pi * 0.5)) ^ 16 -- Gets rid of the steering limit when going backwards
-    local smoothLimit         = limitSmoother:get(targetSteeringAngle, dt)
-    local limit               = math.lerp(smoothLimit / vData.steeringLockDeg, 1.0, notForward) -- The final steering limit (absolute)
+    local limit               = math.lerp(targetSteeringAngle / vData.steeringLockDeg, 1.0, notForward) -- The final steering limit (absolute)
 
     return math.clamp((initialSteering * limit) + selfSteerForce + antiSelfSteer, -1.0, 1.0)
 end
