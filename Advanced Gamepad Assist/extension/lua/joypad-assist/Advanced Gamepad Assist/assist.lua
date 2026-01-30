@@ -649,8 +649,8 @@ local function calcCorrectedSteering(vData, targetFrontSlipDeg, initialSteering,
 
     local antiSelfSteer       = absInitialSteering * -selfSteerForce -- This prevents the self-steer force from affecting the steering limit
     local targetInward        = finalTargetSlip - clampedFAxleVelAngle -- Steering limit when turning inward
-    local counterMult         = math.lerp(math.lerpInvSat(-inputSign * rAxleHVelAngle, 0.0, 30.0) * (1.0 / 3.0) + (2.0 / 3.0), 1.0, uiData.countersteerResponse) -- Makes manual countersteering a bit less sensitive near the center
-    local targetCounter       = (finalTargetSlip * (uiData.countersteerResponse * counterMult * 0.7 + 0.1)) - (inputSign * rAxleHVelAngle) -- Steering limit when countersteering
+    local counterMult         = math.lerp(math.lerpInvSat(-inputSign * rAxleHVelAngle, 0.0, 30.0) * (1.5 / 3.0) + (1.5 / 3.0), 1.0, uiData.countersteerResponse) -- Makes manual countersteering a bit less sensitive near the center
+    local targetCounter       = (finalTargetSlip * (uiData.countersteerResponse * counterMult)) - (inputSign * rAxleHVelAngle) -- Steering limit when countersteering
 
     local targetSteeringAngle = math.lerp(math.clamp(targetInward, 0, vData.steeringLockDeg), math.clamp(targetCounter, 0, vData.steeringLockDeg), counterIndicator) -- The steering angle that would result in the targeted slip angle
     local notForward          = math.sin(math.clamp(math.rad(vData.travelDirection * 2.0 / 3.0), -math.pi * 0.5, math.pi * 0.5)) ^ 16 -- Gets rid of the steering limit when going backwards
